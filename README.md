@@ -103,3 +103,71 @@ Step 2: Create and Set Up the Google Apps Script
 2.4: Add the Script Code
 
 Copy and paste the following code into the script editor, replacing any existing code:
+
+function processODTEmails() {
+  var label = GmailApp.getUserLabelByName("ODT_Processing");
+  var threads = label.getThreads();
+
+  for (var i = 0; i < threads.length; i++) {
+    var messages = threads[i].getMessages();
+
+    for (var j = 0; j < messages.length; j++) {
+      var attachments = messages[j].getAttachments();
+
+      for (var k = 0; k < attachments.length; k++) {
+        var attachment = attachments[k];
+
+        if (attachment.getContentType() === "application/vnd.oasis.opendocument.text") {
+          try {
+            // Save ODT to Drive
+            var file = DriveApp.createFile(attachment);
+
+            // Convert ODT to Google Doc using Advanced Drive Service
+            var fileBlob = attachment.copyBlob();
+            var convertedFile = Drive.Files.insert(
+              {
+                title: file.getName(),
+                mimeType: 'application/vnd.google-apps.document'
+              },
+              fileBlob,
+              {
+                convert: true
+              }
+            );
+
+            // Export Google Doc as PDF
+            var pdfBlob = DriveApp.getFileById(convertedFile.id).getAs('application/pdf');
+
+            // Get the current date and format it
+            var currentDate = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd");
+
+            // Create the email subject with the current date
+            var subject = "Converted PDF - " + currentDate;
+
+            // Add the robot emoji to the email body
+            var body = "Please find the attached PDF.";
+
+            // Define the recipients
+            var recipient1 = "mailinglist@example.com";
+            var recipient2 = "secondemail@example.com";
+            var recipients = recipient1 + "," + recipient2;
+
+            // Send email with PDF attachment to multiple recipients
+            GmailApp.sendEmail(recipients, subject, body, {
+              attachments: [pdfBlob]
+            });
+
+            // Clean up: Remove files from Drive
+            DriveApp.getFileById(convertedFile.id).setTrashed(true);
+            file.setTrashed(true);
+
+          } catch (e) {
+            Logger.log('Error processing attachment: ' + e.toString());
+          }
+        }
+      }
+    }
+    // Remove label to mark as processed
+    threads[i].removeLabel(label);
+  }
+}
