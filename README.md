@@ -103,7 +103,7 @@ Step 2: Create and Set Up the Google Apps Script
 2.4: Add the Script Code
 
 Copy and paste the following code into the script editor, replacing any existing code:
-
+```
 function processODTEmails() {
   var label = GmailApp.getUserLabelByName("ODT_Processing");
   var threads = label.getThreads();
@@ -171,3 +171,4 @@ function processODTEmails() {
     threads[i].removeLabel(label);
   }
 }
+```
