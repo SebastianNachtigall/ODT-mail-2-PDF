@@ -172,3 +172,92 @@ function processODTEmails() {
   }
 }
 ```
+2.5: Customize the Script
+
+	•	Update Email Addresses:
+	•	Replace "mailinglist@example.com" and "secondemail@example.com" with your actual email addresses.
+```
+var recipient1 = "yourfirstemail@example.com";
+var recipient2 = "yoursecondemail@example.com";
+```
+
+
+	•	Modify Email Content (Optional):
+	•	Customize the subject and body variables as desired.
+
+Step 3: Authorize and Test the Script
+
+	1.	Authorize the Script:
+	•	Click on the “Save project” icon (💾).
+	•	Select the processODTEmails function from the dropdown menu.
+	•	Click the Run button (▶️).
+	•	Follow the prompts to authorize the script:
+	•	Select your Google account.
+	•	Click “Advanced” and then “Go to [Project Name] (unsafe)” if prompted.
+	•	Review permissions and click “Allow”.
+	2.	Test the Script:
+	•	Send a test email to your Gmail account with an ODT attachment.
+	•	Ensure it gets labeled as ODT_Processing.
+	•	Run the script manually by clicking the Run button.
+	•	Check that the PDF version is sent to the specified email addresses.
+	•	Verify that the original email label is removed or the email is archived.
+
+Step 4: Set Up Triggers for Automation
+
+Automate the script to run at regular intervals.
+
+	1.	Open Triggers:
+	•	In the Apps Script editor, click on the Triggers icon (⏰) on the left sidebar.
+	•	Alternatively, go to “Edit” > “Current project’s triggers”.
+	2.	Create a New Trigger:
+	•	Click on “Add Trigger” (➕).
+	3.	Configure the Trigger:
+	•	Choose which function to run: processODTEmails
+	•	Deployment: Head
+	•	Select event source: Time-driven
+	•	Select type of time-based trigger: Minutes timer
+	•	Select minute interval: Every 5 minutes (or your preferred interval)
+	•	Failure notification settings: Notify me immediately on failure
+	•	Click “Save”.
+	4.	Verify the Trigger:
+	•	The trigger should now appear in the list of project triggers.
+
+Additional Considerations
+
+Error Handling
+
+	•	Logging:
+	•	Use Logger.log() to log information or errors.
+	•	View logs by clicking “View” > “Logs” in the Apps Script editor.
+	•	Notifications:
+	•	Modify the script to send an email to yourself if an error occurs.
+
+ ```
+ catch (e) {
+  Logger.log('Error processing attachment: ' + e.toString());
+  GmailApp.sendEmail("youremail@example.com", "Script Error", e.toString());
+}
+```
+
+
+Quotas and Limits
+
+	•	Gmail Sending Limits:
+	•	Standard Gmail accounts have a daily sending limit of 500 emails.
+	•	Google Workspace accounts have higher limits.
+	•	Apps Script Quotas:
+	•	Be aware of execution time limits and other quotas.
+	•	Reference: Apps Script Quotas
+
+Security Best Practices
+
+	•	Protect Sensitive Data:
+	•	Do not share your script or project with untrusted parties.
+	•	Review Permissions:
+	•	The script requires access to Gmail and Drive. Ensure you’re comfortable with these permissions.
+	•	Monitor Activity:
+	•	Regularly check your sent emails and script executions for any anomalies.
+
+Conclusion
+
+By following this guide, you’ve set up an automated system to convert ODT files received via email into PDFs and forward them to specified recipients. This automation leverages Google’s free tools and services, eliminating the need for additional hosting costs.
